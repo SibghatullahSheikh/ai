@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search tests</title>
+    <link rel="stylesheet" href="../../../qunit/qunit.css"/>
+    <script src="../../../require/require.js"></script>
+    <script src="../../../qunit/qunit.js"></script>
+</head>
+<body>
+<div id="qunit"></div>
+<script>
+
+    requirejs.config({
+        baseUrl: '../../../..',
+        paths: {
+            ai: 'src/lib/ai',
+            chopchop: 'chopchop/src/lib',
+            testai: 'testsrc/lib/ai'
+        }
+    });
+
+    QUnit.config.autostart = false;
+    require([
+        'testai/search/Dijkstra-test',
+        'testai/search/AStar-test'
+    ], function () {
+        QUnit.start(); //Tests loaded, run tests
+    });
+
+
+</script>
+</body>
+</html>

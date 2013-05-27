@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>strucr tests</title>
+    <link rel="stylesheet" href="../../../qunit/qunit.css"/>
+    <script src="../../../require/require.js"></script>
+    <script src="../../../qunit/qunit.js"></script>
+</head>
+<body>
+<div id="qunit"></div>
+<script>
+
+    requirejs.config({
+        baseUrl: '../../../..',
+        paths: {
+            ai: 'src/lib/ai',
+            chopchop: 'src/lib/chopchop',
+            testai: 'testsrc/lib/ai'
+        }
+    });
+
+    QUnit.config.autostart = false;
+    require([
+        'testai/struct/BinaryHeap-test'
+    ], function () {
+        QUnit.start(); //Tests loaded, run tests
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+[submodule "chopchop"]
+	path = chopchop
+	url = https://github.com/trgn/chopchop.js.git

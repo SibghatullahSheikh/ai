@@ -5,7 +5,7 @@ define([], function () {
    * c: Martijn Haverbeke, 2007
    * http://eloquentjavascript.net/appendix2.html
    *
-   * modified to use comparator instead of score function + good parts code-style
+   * modified to use comparator instead of score function + decreasable + good parts code-style
    */
 
   function BinaryHeap(comparator) {
@@ -14,6 +14,10 @@ define([], function () {
   }
 
   BinaryHeap.prototype = {
+
+    decreaseKey: function (object) {
+
+    },
 
     push: function (element) {
       this._elements.push(element);
@@ -26,15 +30,12 @@ define([], function () {
     },
 
     pop: function () {
-
       var result = this._elements[0];
       var end = this._elements.pop();
-
       if (this._elements.length > 0) {
         this._elements[0] = end;
         this._sinkDown(0);
       }
-
       return result;
     },
 
@@ -127,6 +128,7 @@ define([], function () {
         this._elements[n] = this._elements[swap];
         this._elements[swap] = element;
         n = swap;
+
       }
     }
   };

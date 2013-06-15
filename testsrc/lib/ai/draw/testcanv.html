@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>test canvas</title>
 </head>
 <body>
 
@@ -10,7 +10,26 @@
 
 
 <script type="text/javascript">
-    var cont = document.getElementById('test').getContext('2d');
+
+    var context = document.getElementById('test').getContext('2d');
+    function trace(coordinates){
+        context.moveTo(coordinates[0],coordinates[1]);
+        for (var i = 0; i < coordinates.length; i += 2){
+            context.lineTo(coordinates[i],coordinates[i+1]);
+        }
+        context.closePath();
+    }
+
+    context.beginPath();
+    trace([0,1,100,10,200,30]);
+    trace([200,10,300,300,220,30]);
+    trace([10,100,10,200,40,200,50,100]);
+    trace([30,180,20,180,20,120]);
+
+    context.strokeStyle = 'rgb(255,0,0)';
+    context.fillStyle = 'rgba(0,255,0,0.5)';
+    context.stroke();
+    context.fill();
 
 
 </script>

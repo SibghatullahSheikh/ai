@@ -185,14 +185,7 @@ define([
       ob = randomOb();
       rt.add(ob);
     }
-    equal(rt.size(), total, "should keep track of size (" + total + ")");
-  });
-
-
-  test("add - some", function () {
-
-
-
+   equal(rt.size(), total, "should keep track of size (" + total + ")");
   });
 
 

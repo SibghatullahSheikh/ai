@@ -183,6 +183,15 @@ define([], function () {
       this._h = this.t - this.b;
       return this;
     },
+    update: function (l, b, r, t) {
+      this.l = l;
+      this.b = b;
+      this.r = r;
+      this.t = t;
+      this._w = this.r - this.l;
+      this._h = this.t - this.b;
+      return this;
+    },
     contains: function (b) {
       return (b.r <= this.r && b.t <= this.t && b.l >= this.l && b.b >= this.b);
     },
@@ -195,6 +204,7 @@ define([], function () {
     this.__nextSibling = null;
     this.envelope = envelope;
     this.object = object;
+    this._searching = false;
   }
 
   function SubTree(envelope, bf, pickseeds) {
@@ -328,6 +338,12 @@ define([], function () {
 
     _search: function (envelope, callback) {
 
+      if (this._searching) {
+        throw new Error('RTree .search() is not reentrant. Do not make a recursive call to .search() in the callback function');
+      }
+
+      this._searching = true;
+
       //check for interaction
       var nodeToExplore = this;
       var child, nw;
@@ -336,10 +352,10 @@ define([], function () {
       //link nodes in LinkedList-fashion to simulate a stack, using the .__nextSearch property
       //better than array
       //- we can keep memory usage constant.
-      //- updating stack is in constant time
+      //- updatinging of the stack is in constant time
       //- ---> search is FAST.
-      //careful
-      //- _search is obviously not reentrant. But this is not a problem, since we do not probide access to _search in public api.
+      //careful!
+      //- ._search() is obviously not reentrant.
 
       while (nodeToExplore) {
         if (nodeToExplore.leaf) {
@@ -368,6 +384,8 @@ define([], function () {
         nodeToExplore.__nextSearch = null;//kill the useless pointer.
         nodeToExplore = nw;
       }
+
+      this._searching = false;
 
     },
 

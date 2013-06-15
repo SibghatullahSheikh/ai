@@ -1,35 +1,5 @@
 define(['../struct/BinaryHeap'], function (BinaryHeap) {
 
-//    var OpenSet = (function () {
-//
-//      function sortSmallestF(node1, node2) {
-//        return node1.fScore - node2.fScore;
-//      }
-//
-//      function OS() {
-//        this._bh = new BinaryHeap(sortSmallestF);
-//        this._keyMap = {  };
-//      }
-//
-//      OS.prototype = {
-//        push: function (elem) {
-//          this._keyMap = elem.id;
-//          this._bh.push(elem);
-//        },
-//        pop: function () {
-//          return this._bh.pop();
-//        },
-//        hasId: function (id) {
-//          return !!this._keyMap[id];
-//        },
-//        size: function () {
-//          return this._bh.size();
-//        }
-//      };
-//
-//      return OS;
-//
-//    }());
 
     var OpenSet = (function () {
 

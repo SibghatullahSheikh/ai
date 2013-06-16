@@ -1,15 +1,28 @@
 define([], function () {
 
 
-  var coordinateBuffer = (function () {
-    //make float buffer and init with floats.
-    var b = new Array(2000);
-    for (var i = 0; i < b.length; i += 1) {
-      b[i] = Math.random();
+  function makeIntBufferArray(length) {
+    var a;
+    if (Int32Array) {
+      a = new Int32Array(length);
+    } else {
+      a = new Array(length);
     }
-    return b;
-  }());
+    return a;
+  }
 
+  function makeDoubleRawArray(coords) {
+    var a;
+    if (Float64Array) {
+      a = new Float64Array(coords.length);
+    } else {
+      a = new Array(coords.length);
+    }
+    for (var i = 0, l = coords.length; i < l; i += 1) {
+      a[i] = coords[i];
+    }
+    return a;
+  }
 
   var polygonVisitor = {
     minx: 0,
@@ -51,18 +64,18 @@ define([], function () {
     }
   };
 
+  function truncate(x) {
+    return x | 0;
+  }
+
   function PolygonPath(pathStream) {
 
     polygonVisitor.reset();
     pathStream.visit(polygonVisitor);
 
     this._paths = polygonVisitor.paths;
-    this._coordinates = polygonVisitor.coordinates;
-
-    if (coordinateBuffer.length < this._coordinates.length) {
-      //resize the buffer.
-      coordinateBuffer = this._coordinates.slice();
-    }
+    this._coordinates = makeDoubleRawArray(polygonVisitor.coordinates);
+    this._coordbuffer = makeIntBufferArray(this._coordinates.length);
 
     this._pl = this._paths.length;
     if (this._l < 6) {
@@ -85,23 +98,31 @@ define([], function () {
     },
     trace: function (context, trans) {
 
-      var coords = this._coordinates;
+      var coBuffer = this._coordbuffer;
+//      var coBuffer = buffer;
       var paths = this._paths;
+      trans.projectAndTruncateForwardCoordinates(this._coordinates, this._coordinates.length, coBuffer);
 
       var ci = 0;
       var pi, pl, cl;
-      for (pi = 0, pl = this._pl; pi < pl; pi += 1) {
+      for (pi = 0, pl = this._pl; pi < pl; pi++) {
         cl = ci + paths[pi];
-        context.moveTo(coords[ci++], coords[ci++]);
+        context.moveTo(coBuffer[ci], coBuffer[ci + 1]);
+        ci += 2;
         while (ci < cl) {
-          context.lineTo(coords[ci++], coords[ci++]);
+          context.lineTo(coBuffer[ci], coBuffer[ci + 1]);
+          ci += 2;
         }
         context.closePath();
       }
 
     }
+
+
+
   };
 
   return PolygonPath;
 });
+var a = {};
 

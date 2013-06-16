@@ -5,11 +5,22 @@
     <link rel="stylesheet" href="../../../qunit/qunit.css"/>
     <script src="../../../require/require.js"></script>
     <script src="../../../qunit/qunit.js"></script>
+    <style >
+        html, body {
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
+
 <body>
-<canvas id="test" width=640 height=420 style="border: 1px solid black">
-</canvas>
-<div id="qunit"></div>
+
+<div style="position: relative; width: 95%; height: 95%; margin: 0 auto; border: 1px solid grey">
+<div id="map" style="width: 100%; height: 100%; position: relative"></div>
+</div>
+
+
 <script type="text/javascript">
 algeria = {"type": "Feature", "id": "DZA", "properties": {"name": "Algeria"}, "geometry": {"type": "Polygon", "coordinates": [
     [
@@ -12645,8 +12656,9 @@ world = {"type": "FeatureCollection", "features": [
         baseUrl: '../../../..',
         paths: {
             ai: 'src/lib/ai',
-            chopchop: 'src/lib/chopchop',
+            chopchop: './chopchop/src/lib',
             testai: 'testsrc/lib/ai'
+
         }
     });
 
@@ -12654,33 +12666,14 @@ world = {"type": "FeatureCollection", "features": [
     require([
         'ai/draw/PathCollection',
         'ai/format/geojson/PathLens',
-        'ai/draw/PolygonPath'
-    ], function (PathCollection, PathLens, PolygonPath) {
+        'ai/draw/PolygonPath',
+        'ai/cartesian/AffineTransformation',
+        'ai/draw/Map'
+    ], function (PathCollection, PathLens, PolygonPath, AffineTransformation, Map) {
 
         QUnit.start(); //Tests loaded, run tests
 
-        var context = document.getElementById('test').getContext('2d');
 
-
-        function trace(coordinates) {
-            context.moveTo(coordinates[0], coordinates[1]);
-            for (var i = 0; i < coordinates.length; i += 2) {
-                context.lineTo(coordinates[i], coordinates[i + 1]);
-            }
-            context.closePath();
-        }
-
-        bef = Date.now();
-//        context.beginPath();
-//        trace([0, 1, 100, 10, 200, 30]);
-//        trace([200, 10, 300, 300, 220, 30]);
-//        trace([10, 100, 10, 200, 40, 200, 50, 100]);
-//        trace([30, 180, 20, 180, 20, 120]);
-        context.strokeStyle = 'rgb(255,0,0)';
-        context.fillStyle = 'rgba(0,255,0,0.5)';
-//        context.stroke();
-//        context.fill();
-//        console.log(' time', Date.now() - bef);
 
         geojsonlens = new PathLens();
 
@@ -12696,17 +12689,6 @@ world = {"type": "FeatureCollection", "features": [
         });
 
 
-//        context.beginPath();
-//        for (var i = 0; i < polygontraces.length; i += 1) {
-//            polygontraces[i].trace(context);
-//        }
-//        context.strokeStyle = 'rgb(255,0,0)';
-//        context.fillStyle = 'rgba(0,255,0,0.5)';
-//        context.stroke();
-//        context.fill();
-
-
-//        console.log(' time', Date.now() - bef);
 
         pathCol = new PathCollection();
 
@@ -12714,10 +12696,14 @@ world = {"type": "FeatureCollection", "features": [
             pathCol.addTrace(trace);
         });
 
-        bef = Date.now();
-        pathCol.draw(context);
-        console.log(' time', Date.now() - bef);
+//        bef = Date.now();
+////        pathCol.draw(context);
+//        console.log(' time', Date.now() - bef);
 
+
+        map = new Map('map');
+        map.scaleAndTranslate(4, -4, 0,0);
+        map.add(pathCol);
 
     });
 

@@ -10,11 +10,29 @@ define([], function (Travis) {
   }
 
   AffineTransformation.prototype = {
-    scaleAndTranslation: function (sx, sy, tx, ty) {
+    retrieveParameters: function (out_) {
+      out_.sx = this._sxa;
+      out_.sy = this._sya;
+      out_.tx = this._txa;
+      out_.ty = this._tya;
+    },
+    updateParameters: function (params) {
+      this._sxa = params.sx;
+      this._sya = params.sy;
+      this._txa = params.tx;
+      this._tya = params.ty;
+      return this;
+    },
+    scaleAndTranslate: function (sx, sy, tx, ty) {
       this._sxa = sx;
       this._sya = sy;
       this._txa = tx;
       this._tya = ty;
+      return this;
+    },
+    translate: function(tx,ty){
+      this._txa += tx;
+      this._tya += ty;
       return this;
     },
     translation: function (tx, ty) {
@@ -22,25 +40,31 @@ define([], function (Travis) {
       this._tya = ty;
       return this;
     },
-    scale: function (sx, sy) {
-      this._sxa = sx;
-      this._sya = sy;
-      return this;
-    },
     scaleForward: function (w, h, out) {
       out.w = w * this._sxa;
       out.h = h * this._sya;
       return this;
     },
-    projectForwardCoordinates: function (coordinates, l, out_) {
-      var i = 0;
+    projectAndTruncateForwardCoordinates: function (coordinates, length, out_) {
+      var i = -1;
       var sx = this._sxa;
       var sy = this._sya;
       var tx = this._txa;
       var ty = this._tya;
-      while (i < l) {
-        out_[i++] = coordinates[i] * sx + tx;
-        out_[i++] = coordinates[i] * sy + ty;
+      while (i < length) {
+        out_[++i] = (coordinates[i] * sx + tx) | 0;
+        out_[++i] = (coordinates[i] * sy + ty) | 0;
+      }
+    },
+    projectForwardCoordinates: function (coordinates, length, out_) {
+      var i = -1;
+      var sx = this._sxa;
+      var sy = this._sya;
+      var tx = this._txa;
+      var ty = this._tya;
+      while (i < length) {
+        out_[++i] = coordinates[i] * sx + tx;
+        out_[++i] = coordinates[i] * sy + ty;
       }
     },
     projectInverseCoordinates: function (coordinates, l, out_) {
@@ -64,13 +88,6 @@ define([], function (Travis) {
       out_.y = (y - this._tya) / this._sya;
       return out_;
     }
-  };
-
-  AffineTransformation.augment = function (object) {
-    for (var i in AffineTransformation.prototype) {
-      object[i] = AffineTransformation.prototype[i];
-    }
-    AffineTransformation.call(object);
   };
 
   return AffineTransformation;
